@@ -1,28 +1,27 @@
-import { useEffect, useState } from "react";
 import MovieCard from "../components/MovieCard";
-import { getPopularMovies, searchMovies } from "../services/api";
+import { useState, useEffect } from "react";
+import { searchMovies, getPopularMovies } from "../services/api";
 import "../css/Home.css";
 
 function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [movies, setMovies] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  // useEffect( () => {},[])  this is how useEffect works
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadPopularMovies = async () => {
       try {
         const popularMovies = await getPopularMovies();
         setMovies(popularMovies);
-      } catch (e) {
-        console.log(e);
-        setError(e);
+      } catch (err) {
+        console.log(err);
+        setError("Failed to load movies...");
       } finally {
         setLoading(false);
       }
     };
+
     loadPopularMovies();
   }, []);
 
@@ -49,21 +48,20 @@ function Home() {
       <form onSubmit={handleSearch} className="search-form">
         <input
           type="text"
-          placeholder="search for movies..."
+          placeholder="Search for movies..."
           className="search-input"
           value={searchQuery}
-          onChange={(e) => {
-            setSearchQuery(e.target.value);
-          }}
+          onChange={(e) => setSearchQuery(e.target.value)}
         />
         <button type="submit" className="search-button">
-          search
+          Search
         </button>
       </form>
 
       {error && <div className="error-message">{error}</div>}
+
       {loading ? (
-        <div className="loading">loading....</div>
+        <div className="loading">Loading...</div>
       ) : (
         <div className="movies-grid">
           {movies.map((movie) => (
